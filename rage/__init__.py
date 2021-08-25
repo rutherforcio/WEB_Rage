@@ -31,6 +31,10 @@ jwt.init_app(app)
 #app.register_blueprint(ventas)
 #app.register_blueprint(users)
 
+from rage.code.users import users
+
+app.register_blueprint(users)
+
 CORS()
 
 def create_app():
