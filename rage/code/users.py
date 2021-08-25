@@ -32,3 +32,134 @@ def register():
         except Exception as e:
             print(e)
             return "Error", 409
+
+
+@users.route('/getUser', methods=['POST'])
+def getUser():
+    if request.method == 'POST':
+        correo = request.get_json()['correo']
+        
+        try:
+            cur = mysql.connection.cursor()
+
+            result = cur.execute("SELECT * FROM usuario WHERE correo ='" + str(correo) + "'")
+
+            if result == 0:
+                return "Error", 404
+
+            resultado = cur.fetchone()
+
+            mysql.connection.commit()
+
+            return jsonify(resultado), 200
+
+        except Exception as e:
+            print(e)
+            return "Error", 409
+
+
+@users.route('/setDireccion', methods=['POST'])
+def setDireccion():
+    if request.method == 'POST':
+        correo = request.get_json()['correo']
+        direcionentrega = request.get_json()['direcionentrega']
+        
+        
+        try:
+            cur = mysql.connection.cursor()
+
+            cur.execute("UPDATE usuario SET direcionEntrega ='" + str(direcionentrega) + "'  WHERE correo ='" + str(correo) + "'")
+
+
+            mysql.connection.commit()
+            result = "success"
+
+            return result, 200
+
+        except Exception as e:
+            print(e)
+            return "Error", 409
+
+
+@users.route('/setPago', methods=['POST'])
+def setPago():
+    if request.method == 'POST':
+        correo = request.get_json()['correo']
+        formapago = request.get_json()['formapago']
+        
+        
+        try:
+            cur = mysql.connection.cursor()
+
+            if formapago != "Paypal" and formapago != "Transferencia":
+                result = "Error"
+            else:
+                
+                cur.execute("UPDATE usuario SET formapago ='" + str(formapago) + "'  WHERE correo ='" + str(correo) + "'")
+                mysql.connection.commit()
+                result = "success"
+
+            return result, 200
+
+        except Exception as e:
+            print(e)
+            return "Error", 409
+
+
+@users.route('/newPassword', methods=['POST'])
+def newPassword():
+    if request.method == 'POST':
+        
+        newcontrasenya = request.get_json()['newcontrasenya']
+        verifycontrasenya = request.get_json()['verifycontrasenya']
+        correo = request.get_json()['correo']
+        
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT contrasenya FROM usuario WHERE correo ='" + str(correo) + "'")
+            userContrasenya = cur.fetchone()
+            contrasenya = (userContrasenya['contrasenya'])
+            if contrasenya == verifycontrasenya:
+                cur.execute("UPDATE usuario SET contrasenya ='" + str(newcontrasenya) + "'  WHERE correo ='" + str(correo) + "'")
+                result = "success"
+            else:
+                
+                result = "Error"
+
+            mysql.connection.commit()
+            
+
+            return result, 200
+
+        except Exception as e:
+            print(e)
+            return "Error", 409
+
+@users.route('/newCorreo', methods=['POST'])
+def newCorreo():
+    if request.method == 'POST':
+        
+        newcorreo = request.get_json()['newcorreo']
+        verifycontrasenya = request.get_json()['verifycontrasenya']
+        correo = request.get_json()['correo']
+        
+        try:
+            cur = mysql.connection.cursor()
+            cur.execute("SELECT contrasenya FROM usuario WHERE correo ='" + str(correo) + "'")
+            userContrasenya = cur.fetchone()
+            contrasenya = (userContrasenya['contrasenya'])
+            if contrasenya == verifycontrasenya:
+                cur.execute("UPDATE usuario SET correo ='" + str(newcorreo) + "'  WHERE correo ='" + str(correo) + "'")
+                result = "success"
+            else:
+                
+                result = "Error"
+
+            mysql.connection.commit()
+            
+
+            return result, 200
+
+        except Exception as e:
+            print(e)
+            return "Error", 409
