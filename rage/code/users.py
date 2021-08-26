@@ -64,12 +64,10 @@ def setDireccion():
         correo = request.get_json()['correo']
         direcionentrega = request.get_json()['direcionentrega']
         
-        
         try:
             cur = mysql.connection.cursor()
 
             cur.execute("UPDATE usuario SET direcionEntrega ='" + str(direcionentrega) + "'  WHERE correo ='" + str(correo) + "'")
-
 
             mysql.connection.commit()
             result = "success"
@@ -86,7 +84,6 @@ def setPago():
     if request.method == 'POST':
         correo = request.get_json()['correo']
         formapago = request.get_json()['formapago']
-        
         
         try:
             cur = mysql.connection.cursor()
@@ -128,7 +125,6 @@ def newPassword():
 
             mysql.connection.commit()
             
-
             return result, 200
 
         except Exception as e:
@@ -157,7 +153,6 @@ def newCorreo():
 
             mysql.connection.commit()
             
-
             return result, 200
 
         except Exception as e:
