@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Blueprint
 from flask_mysqldb import MySQL
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager
 from rage import mysql, jwt
 import smtplib
@@ -8,6 +8,7 @@ import smtplib
 users = Blueprint('users', __name__)
 
 @users.route('/register', methods=['POST'])
+@cross_origin()
 def register():
     if request.method == 'POST':
         print("entra")
@@ -35,6 +36,7 @@ def register():
 
 
 @users.route('/getUser', methods=['POST'])
+@cross_origin()
 def getUser():
     if request.method == 'POST':
         correo = request.get_json()['correo']
@@ -59,6 +61,7 @@ def getUser():
 
 
 @users.route('/setDireccion', methods=['POST'])
+@cross_origin()
 def setDireccion():
     if request.method == 'POST':
         correo = request.get_json()['correo']
@@ -80,6 +83,7 @@ def setDireccion():
 
 
 @users.route('/setPago', methods=['POST'])
+@cross_origin()
 def setPago():
     if request.method == 'POST':
         correo = request.get_json()['correo']
@@ -104,6 +108,7 @@ def setPago():
 
 
 @users.route('/newPassword', methods=['POST'])
+@cross_origin()
 def newPassword():
     if request.method == 'POST':
         
@@ -132,6 +137,7 @@ def newPassword():
             return "Error", 409
 
 @users.route('/newCorreo', methods=['POST'])
+@cross_origin()
 def newCorreo():
     if request.method == 'POST':
         

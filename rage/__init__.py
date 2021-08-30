@@ -38,7 +38,8 @@ app.register_blueprint(users)
 app.register_blueprint(products)
 
 
-CORS()
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 def create_app():
     global app
