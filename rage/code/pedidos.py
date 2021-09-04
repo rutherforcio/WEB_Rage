@@ -4,6 +4,8 @@ from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager
 from rage import mysql, jwt
 import smtplib
+import json
+import random
 
 pedidos = Blueprint('pedidos', __name__)
 
@@ -11,25 +13,34 @@ pedidos = Blueprint('pedidos', __name__)
 @cross_origin()
 def anyadir():
     if request.method == 'POST':
-        print("entra pedido")
         # Obtener campos de la peticion
         id_usuario = request.get_json()['id_usuario']
-        id_producto = request.get_json()['id_producto']
-        cantidad = request.get_json()['cantidad']
+        productos = request.get_json()['productos']
 
-        print(id_usuario)
-        print(id_producto)
-        print(cantidad)
         try:
-            cur = mysql.connection.cursor()
+            # Generar numero de pedido aleatorio unico
+            done = False
+            r = 0
+            while not done:
+                r = random.randrange(0, 10000)
+                cur = mysql.connection.cursor()
+                exists = cur.execute("SELECT * FROM pedido WHERE n_pedido =" + str(r) + "")
 
-            cur.execute('INSERT INTO pedido (id_usuario, id_producto, n_pedido, cantidad) VALUES (%s, %s, %s, %s)',
-            (id_usuario, id_producto, 1, cantidad))
+                if exists == 0:
+                    done = True
+            
+            n_pedido = r
 
-            mysql.connection.commit()
+            # Insertar pedidos
+            for producto in productos:
+                cur = mysql.connection.cursor()
 
-            #access_token = create_access_token(identity = {'login': Login,'nombre': Nombre,'apellidos': Apellidos, 'email': Email, 'foto': Foto})
-            #result = access_token
+                cur.execute('INSERT INTO pedido (id_usuario, id_producto, n_pedido, cantidad) VALUES (%s, %s, %s, %s)',
+                (id_usuario, producto['id_producto'], n_pedido, producto['cantidad']))
+
+                mysql.connection.commit()
+
+
             result = "success"
             return result, 200
 
