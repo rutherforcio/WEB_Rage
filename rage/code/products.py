@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, Blueprint
 from flask_mysqldb import MySQL
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_jwt_extended import JWTManager
 from rage import mysql, jwt
 import smtplib
@@ -35,6 +35,7 @@ def newProduct():
 
 
 @products.route('/existProduct', methods=['POST'])
+@cross_origin()
 def existProduct():
     if request.method == 'POST':
         print("entra")
@@ -62,6 +63,7 @@ def existProduct():
 
 
 @products.route('/nameId', methods=['POST'])
+@cross_origin()
 def nameId():
     if request.method == 'POST':
         print("entra")
@@ -88,6 +90,7 @@ def nameId():
 
 
 @products.route('/allProducts', methods=['POST'])
+@cross_origin()
 def allProducts():
     if request.method == 'POST':
         print("entra")
@@ -111,6 +114,7 @@ def allProducts():
 
 
 @products.route('/tipeProducts', methods=['POST'])
+@cross_origin()
 def tipeProducts():
     if request.method == 'POST':
         print("entra")
@@ -135,6 +139,7 @@ def tipeProducts():
             return "Error", 409
 
 @products.route('/idProduct', methods=['POST'])
+@cross_origin()
 def idProduct():
     if request.method == 'POST':
         print("entra")
