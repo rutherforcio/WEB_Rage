@@ -34,10 +34,12 @@ jwt.init_app(app)
 from rage.code.pedidos import pedidos
 from rage.code.users import users
 from rage.code.products import products
+from rage.code.carrito import carrito
 
 app.register_blueprint(pedidos)
 app.register_blueprint(users)
 app.register_blueprint(products)
+app.register_blueprint(carrito)
 
 
 

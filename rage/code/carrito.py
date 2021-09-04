@@ -7,36 +7,24 @@ import smtplib
 import json
 import random
 
-pedidos = Blueprint('pedidos', __name__)
+carrito = Blueprint('carrito', __name__)
 
-@pedidos.route('/anyadir', methods=['POST'])
+@carrito.route('/anyadir_carrito', methods=['POST'])
 @cross_origin()
-def anyadir():
+def anyadir_carrito():
     if request.method == 'POST':
         # Obtener campos de la peticion
         id_usuario = request.get_json()['id_usuario']
         productos = request.get_json()['productos']
 
         try:
-            # Generar numero de pedido aleatorio unico
-            done = False
-            r = 0
-            while not done:
-                r = random.randrange(0, 10000)
-                cur = mysql.connection.cursor()
-                exists = cur.execute("SELECT * FROM pedido WHERE n_pedido =" + str(r) + "")
 
-                if exists == 0:
-                    done = True
-            
-            n_pedido = r
-
-            # Insertar pedidos
+            # Insertar elementos
             for producto in productos:
                 cur = mysql.connection.cursor()
 
-                cur.execute('INSERT INTO pedido (id_usuario, id_producto, n_pedido, cantidad) VALUES (%s, %s, %s, %s)',
-                (id_usuario, producto['id_producto'], n_pedido, producto['cantidad']))
+                cur.execute('INSERT INTO carrito (id_usuario, id_producto, cantidad) VALUES (%s, %s, %s)',
+                (id_usuario, producto['id_producto'], producto['cantidad']))
 
                 mysql.connection.commit()
 
@@ -48,27 +36,33 @@ def anyadir():
             print(e)
             return "Error", 409
 
-@pedidos.route('/quitar_producto', methods=['POST'])
+@carrito.route('/quitar_carrito', methods=['POST'])
 @cross_origin()
-def quitar_producto():
+def quitar_carrito():
     if request.method == 'POST':
 
-        n_pedido = request.get_json()['n_pedido']
         id_producto = request.get_json()['id_producto']
         id_usuario = request.get_json()['id_usuario'] 
 
         try:
             cur = mysql.connection.cursor()
-            verificacion = cur.execute("SELECT * FROM pedido WHERE n_pedido =" + str(n_pedido) + " AND id_producto =" + str(id_producto) +" AND id_usuario ='" + str(id_usuario) +"'")
+            verificacion = cur.execute("SELECT * FROM carrito WHERE id_producto =" + str(id_producto) +" AND id_usuario ='" + str(id_usuario) +"'")
             print(verificacion)
+            mysql.connection.commit()
             if verificacion == 1:
                 print ("entra")
                 cur = mysql.connection.cursor()
-                cur.execute("DELETE FROM pedido WHERE (n_pedido =" + str(n_pedido) + ") AND (id_producto =" + str(id_producto) +") AND (id_usuario ='" + str(id_usuario) +"')")
+                prueba = cur.execute("DELETE FROM carrito WHERE id_producto =" + str(id_producto) +" AND id_usuario ='" + str(id_usuario) +"'")
                 mysql.connection.commit()
+                #prueba = cur.execute("DELETE FROM carrito WHERE id_producto =" + str(id_producto) +" AND id_usuario ='" + str(id_usuario) +"'")
+                if prueba == 1:
+                    ("bien")
+                else:
+                    print("mal")
+
 
             else:
-                result = "No existe un usario con este numero de pedido"
+                result = "No existe un usario con este producto en el carrito"
                 return result, 404
 
 
@@ -81,17 +75,17 @@ def quitar_producto():
             print(e)
             return "Error", 409 
 
-@pedidos.route('/listar', methods=['POST'])
+@carrito.route('/listar_carrito', methods=['POST'])
 @cross_origin()
-def listar():
+def listar_carrito():
     if request.method == 'POST':
         print("entra")
-        n_pedido = request.get_json()['n_pedido']
+        id_usuario = request.get_json()['id_usuario']
 
         try:
             cur = mysql.connection.cursor()
 
-            resultado = cur.execute("SELECT * FROM pedido WHERE n_pedido = " + str(n_pedido) +"") 
+            resultado = cur.execute("SELECT * FROM carrito WHERE id_usuario = '" + str(id_usuario) +"'") 
             if resultado == 0:
                 return "Error", 404
 
